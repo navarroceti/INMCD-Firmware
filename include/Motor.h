@@ -36,15 +36,15 @@ public:
         Serial.println("Motor hacia adelante");
         delay(2000);
 
-        motor.ControlMotor(true, 0);
+        this->ControlMotor(true, 0);
         Serial.println("Motor detenido");
         delay(2000);
 
-        motor.ControlMotor(false, velocidad);
+        this->ControlMotor(false, velocidad);
         Serial.println("Motor hacia atrás");
         delay(2000);
 
-        motor.ControlMotor(true, 0);
+        this->ControlMotor(true, 0);
         Serial.println("Motor detenido");
         delay(2000);
     }
