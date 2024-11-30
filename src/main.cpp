@@ -11,7 +11,6 @@
 Motor motor;
 Communication com;
 SensorCorriente sensor;
-Encoder encoder;
 WifiManager wifi;
 API api;
 
@@ -19,11 +18,14 @@ void setup()
 {
   Serial.begin(115200);
   motor.SetVelocidad(100);
-  wifi.ConectarWifi();
+  // wifi.ConectarWifi();
+  encoder_setup();
 }
 
 void loop()
 {
-  api.sendPostRequest(10,2);
-  motor.Test();
+  // api.sendPostRequest(10,2);
+  // motor.Test();
+  encoder_loop();
+  delay(100);
 }
