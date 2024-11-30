@@ -4,7 +4,7 @@ class SensorCorriente
 private:
     // sensibilidad en Voltios/Amperio para sensor de 5A
     float Sensibilidad = 0.185;
-    const int AnalogPin = 39;
+    const int AnalogPin = 35;
 
 public:
     SensorCorriente() {

@@ -8,8 +8,8 @@ private:
 
     const char *serverName = "https://myth.logiasimbolica.com/"; // Replace with your server URL
 public:
-    API();
-    ~API();
+    API(){}
+    ~API(){}
 
     void sendGetRequest()
     {

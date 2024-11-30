@@ -3,7 +3,7 @@
 class Motor
 {
 private:
-    int velocidad;
+    int velocidad = 255;
     // Definir los pines para el control del motor
     const int enAPin = 27;
     const int in1Pin = 12;
@@ -22,10 +22,30 @@ public:
     {
         this->velocidad = velocidad;
     }
+    
     void ControlMotor(bool forward, int speed)
     {
         digitalWrite(in1Pin, forward ? HIGH : LOW);
         digitalWrite(in2Pin, forward ? LOW : HIGH);
         analogWrite(enAPin, speed);
+    }
+    
+    void Test()
+    {
+        this->ControlMotor(true, velocidad);
+        Serial.println("Motor hacia adelante");
+        delay(2000);
+
+        motor.ControlMotor(true, 0);
+        Serial.println("Motor detenido");
+        delay(2000);
+
+        motor.ControlMotor(false, velocidad);
+        Serial.println("Motor hacia atrás");
+        delay(2000);
+
+        motor.ControlMotor(true, 0);
+        Serial.println("Motor detenido");
+        delay(2000);
     }
 };
