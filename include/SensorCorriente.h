@@ -15,8 +15,7 @@ public:
     {
         float voltajeSensor = analogRead(AnalogPin) * (5.0 / 1023.0); // lectura del sensor
         float I = (voltajeSensor - 2.5) / Sensibilidad;        // Ecuación  para obtener la corriente
-        Serial.print("Corriente: ");
-        Serial.println(I, 3);
+        Serial.print(">corriente: " + String(I, 3) + "\n");
         delay(200);
     }
 };

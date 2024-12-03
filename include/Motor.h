@@ -1,51 +1,58 @@
 #include <Arduino.h>
+// Pines control puente H
+#define ENA_PIN 27
+#define IN1_PIN 12
+#define IN2_PIN 14
+
+enum DIRECCION_MOTOR
+{
+    FORWARD,
+    BACKWARD,
+    STOP
+};
 
 class Motor
 {
 private:
     int velocidad = 255;
-    // Definir los pines para el control del motor
-    const int enAPin = 27;
-    const int in1Pin = 12;
-    const int in2Pin = 14;
+    DIRECCION_MOTOR direccion = FORWARD;
 
 public:
     Motor()
     {
         this->velocidad = 0;
-        pinMode(this->in1Pin, OUTPUT);
-        pinMode(this->in2Pin, OUTPUT);
-        pinMode(this->enAPin, OUTPUT);
+        pinMode(IN1_PIN, OUTPUT);
+        pinMode(IN2_PIN, OUTPUT);
+        pinMode(ENA_PIN, OUTPUT);
     }
     ~Motor() {}
     void SetVelocidad(int velocidad)
     {
         this->velocidad = velocidad;
     }
-    
-    void ControlMotor(bool forward, int speed)
+
+    void SetDireccion(DIRECCION_MOTOR direccion)
     {
-        digitalWrite(in1Pin, forward ? HIGH : LOW);
-        digitalWrite(in2Pin, forward ? LOW : HIGH);
-        analogWrite(enAPin, speed);
+        this->direccion = direccion;
     }
-    
-    void Test()
+
+    void Actualizar()
     {
-        this->ControlMotor(true, velocidad);
-        Serial.println("Motor hacia adelante");
-        delay(2000);
-
-        this->ControlMotor(true, 0);
-        Serial.println("Motor detenido");
-        delay(2000);
-
-        this->ControlMotor(false, velocidad);
-        Serial.println("Motor hacia atrás");
-        delay(2000);
-
-        this->ControlMotor(true, 0);
-        Serial.println("Motor detenido");
-        delay(2000);
+        switch (direccion)
+        {
+        case FORWARD:
+            digitalWrite(IN1_PIN, HIGH);
+            digitalWrite(IN2_PIN, LOW);
+            break;
+        case BACKWARD:
+            digitalWrite(IN1_PIN, LOW);
+            digitalWrite(IN2_PIN, HIGH);
+            break;
+        case STOP:
+            digitalWrite(IN1_PIN, LOW);
+            digitalWrite(IN2_PIN, LOW);
+            break;
+        }
+        analogWrite(ENA_PIN, velocidad);
     }
 };

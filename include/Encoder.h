@@ -27,5 +27,5 @@ void encoder_setup()
 }
 void encoder_loop()
 {
-    Serial.println("Encoder value: " + String(encoder_value));
+    Serial.println(">encoder: " + String(encoder_value));
 }
