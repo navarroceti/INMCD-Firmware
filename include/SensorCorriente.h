@@ -13,9 +13,29 @@ public:
     ~SensorCorriente() {}
     void Sensar()
     {
-        float voltajeSensor = analogRead(AnalogPin) * (5.0 / 1023.0); // lectura del sensor
-        float I = (voltajeSensor - 2.5) / Sensibilidad;        // Ecuación  para obtener la corriente
-        Serial.print(">corriente: " + String(I, 3) + "\n");
-        delay(200);
+        // # Sensar 1 sola muestra
+        // int analogValue = analogRead(AnalogPin);
+        // float voltajeSensor = analogValue * (5.0 / 1023.0); // lectura del sensor
+        // float I = (voltajeSensor - 2.5) / Sensibilidad;        // Ecuación  para obtener la corriente
+        // Serial.print(">corriente: " + String(I, 3) + "\n");
+        // Serial.print(">analog-read " + String(analogValue) + "\n");
+        // delay(200);
+
+        float I = get_corriente(200); // obtenemos la corriente promedio de 200 muestras
+        Serial.print(">corriente: ");
+        Serial.println(I, 3);
+    }
+
+    float get_corriente(int n_muestras)
+    {
+        float voltajeSensor;
+        float corriente = 0;
+        for (int i = 0; i < n_muestras; i++)
+        {
+            voltajeSensor = analogRead(A0) * (5.0 / 1023.0);              ////lectura del sensor
+            corriente = corriente + (voltajeSensor - 2.5) / Sensibilidad; // Ecuación  para obtener la corriente
+        }
+        corriente = corriente / n_muestras;
+        return (corriente);
     }
 };
