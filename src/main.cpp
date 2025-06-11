@@ -1,92 +1,93 @@
-#include <Motor.h>
-#include <Communication.h>
 #include <Arduino.h>
-#include <Led.h>
-#include <Encoder.h>
-#include <SensorCorriente.h>
+#include <Communication.h>
 #include <WifiManager.h>
-#include <API.h>
+#include <Adafruit_PWMServoDriver.h>
 
-Motor motor;
 Communication com;
-SensorCorriente sensor;
 WifiManager wifi;
-API api;
-int y = 0;
-static int t = 0;
 
-unsigned long previousMillis = 0; // Almacena el tiempo anterior
-const long interval = 3000;         // Intervalo de tiempo en milisegundos
+Adafruit_PWMServoDriver board1 = Adafruit_PWMServoDriver();
+
+#define SERVOMIN  125 // this is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX  575 // this is the 'maximum' pulse length count (out of 4096)
+
+int angleToPulse(int ang){
+	int pulse = map(ang,0, 180, SERVOMIN,SERVOMAX);// map angle of 0 to 180 to Servo min and Servo max 
+	Serial.print("Angle: ");Serial.print(ang);
+	Serial.print(" pulse: ");Serial.println(pulse);
+	return pulse;
+ }
+
+#include <Wire.h>
 
 void setup()
 {
-  Serial.begin(115200);
-  motor.SetVelocidad(0);
-  // wifi.ConectarWifi();
-  encoder_setup();
-  delay(2000);
+	Wire.begin(); // Usa los pines por defecto: SDA=21, SCL=22
+	Serial.begin(115200);
+	while (!Serial); // Espera que el puerto esté listo
+
+	Serial.println("Buscando dispositivos I2C...");
+	byte count = 0;
+	for (byte i = 1; i < 127; ++i)
+	{
+		Wire.beginTransmission(i);
+		if (Wire.endTransmission() == 0)
+		{
+			Serial.print("Encontrado dispositivo en 0x");
+			Serial.println(i, HEX);
+			count++;
+		}
+	}
+	if (count == 0)
+		Serial.println("¡Ningún dispositivo I2C encontrado!");
+	else
+	{
+		if (board1.begin())
+		{
+			board1.setPWMFreq(50);
+			for (size_t i = 0; i < 16; i++)
+			{
+				board1.setPWM(i, 0, angleToPulse(0));
+			}
+			board1.setPWM(0, 0, angleToPulse(0));
+			board1.setPWM(1, 0, angleToPulse(45));
+			board1.setPWM(2, 0, angleToPulse(90));
+			board1.setPWM(3, 0, angleToPulse(135));
+			board1.setPWM(4, 0, angleToPulse(180));
+
+			board1.setPWM(5, 0, angleToPulse(0));
+			board1.setPWM(6, 0, angleToPulse(45));
+			board1.setPWM(7, 0, angleToPulse(90));
+			board1.setPWM(8, 0, angleToPulse(135));
+			board1.setPWM(9, 0, angleToPulse(180));
+
+			board1.setPWM(10, 0, angleToPulse(0));
+			board1.setPWM(11, 0, angleToPulse(45));
+			board1.setPWM(12, 0, angleToPulse(90));
+			board1.setPWM(13, 0, angleToPulse(135));
+			board1.setPWM(14, 0, angleToPulse(180));
+			
+
+
+			Serial.println("Encontrado PCA9685 I2C Servo Driver en 0x40");
+		}
+		else
+		{
+			Serial.println("No se encontró el PCA9685 I2C Servo Driver en 0x40");
+		}
+	}
 }
-
-int estado = 0;
-int estado_anterior = 0;
-void test_motor()
-{
-  unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval)
-  {
-    previousMillis = currentMillis;
-    
-    // transicionar entre estados
-    if(estado == 0)
-    {
-      estado = 1;
-    }
-    else if (estado == 1)
-    {
-      estado = 2;
-    }
-    else if (estado == 2)
-    {
-      estado = 0;
-    }
-  }
-
-  if (estado != estado_anterior)
-  {
-    estado_anterior = estado;
-  }else{
-    return;
-  }
-
-  switch (estado)
-  {
-  case 0:
-    Serial.println("Motor hacia adelante");
-    motor.SetDireccion(FORWARD);
-    motor.SetVelocidad(100);
-    motor.Actualizar();
-    break;
-  case 1:
-    Serial.println("Motor hacia atrás");
-    motor.SetDireccion(BACKWARD);
-    motor.SetVelocidad(100);
-    motor.Actualizar();
-    break;
-  case 2:
-    Serial.println("Motor detenido");
-    motor.SetDireccion(STOP);
-    motor.SetVelocidad(0);
-    motor.Actualizar();
-    break;
-  default:
-    break;
-  }
-}
-
 void loop()
 {
-  test_motor();
-  encoder_loop();
-  sensor.Sensar();
-  delay(100);
+	int speed = 800;
+
+	board1.setPWM(15, 0, angleToPulse(180));
+	delay(speed);
+	board1.setPWM(15, 0, angleToPulse(135));
+	delay(speed);
+
+	board1.setPWM(14, 0, angleToPulse(180));
+	delay(speed);
+	board1.setPWM(14, 0, angleToPulse(90));
+	delay(speed);
 }
